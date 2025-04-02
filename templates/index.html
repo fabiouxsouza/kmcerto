@@ -21,12 +21,43 @@
 
             <div class="form-group">
                 <label for="km_rodados">Km Rodados:</label>
-                <input type="number" id="km_rodados" name="km_rodados" step="0.01" required>
+                <input type="number" id="km_rodados" name="km_rodados" step="0.01" min="0" required>
             </div>
 
             <div class="form-group">
                 <label for="horas_trabalhadas">Horas Trabalhadas:</label>
-                <input type="number" id="horas_trabalhadas" name="horas_trabalhadas" step="0.01" required>
+                <input type="number" id="horas_trabalhadas" name="horas_trabalhadas" step="0.01" min="0"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="combustivel">Combustível:</label>
+                <input type="number" id="combustivel" name="combustivel" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="almoco">Almoço:</label>
+                <input type="number" id="almoco" name="almoco" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="manutencao">Manutenção:</label>
+                <input type="number" id="manutencao" name="manutencao" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="seguro">Seguro:</label>
+                <input type="number" id="seguro" name="seguro" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="financ">Financiamento:</label>
+                <input type="number" id="financ" name="financ" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="pro_labore">Pró-labore:</label>
+                <input type="number" id="pro_labore" name="pro_labore" step="0.01" min="0" required>
             </div>
 
             <button type="button" id="btn-cadastrar">Cadastrar</button>
@@ -46,7 +77,7 @@
                         <th>Manutenção</th>
                         <th>Seguro</th>
                         <th>Financ.</th>
-                        <th>Pro-labore</th>
+                        <th>Pró-labore</th>
                         <th>Despesas Totais</th>
                         <th>Lucro</th>
                     </tr>

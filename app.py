@@ -1,25 +1,16 @@
-from flask import Flask, render_template, request, jsonify  # Importe 'request' e 'jsonify'
-import sqlite3  # Importe a biblioteca sqlite3
-from datetime import datetime # Importe a biblioteca datetime
+from flask import Flask, render_template, request, jsonify
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 
-# --- Funções auxiliares para o banco de dados ---
-
 def get_db_connection():
-    """
-    Função para estabelecer uma conexão com o banco de dados SQLite.
-    Cria o banco de dados 'diarias.db' se ele não existir.
-    """
     conn = sqlite3.connect('diarias.db')
-    conn.row_factory = sqlite3.Row  # Define a fábrica de linhas para acessar colunas por nome
+    conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
-    """
-    Função para inicializar o banco de dados (criar a tabela se ela não existir).
-    """
-    conn = get_db_connection()  # Obtém uma conexão com o banco de dados
+    conn = get_db_connection()
     try:
         conn.execute('''
             CREATE TABLE IF NOT EXISTS diarias (
@@ -37,40 +28,26 @@ def init_db():
                 despesas_totais REAL,
                 lucro REAL
             )
-        ''')  # Executa o comando SQL para criar a tabela 'diarias'
-        conn.commit()  # Salva as alterações no banco de dados
+        ''')
+        conn.commit()
     except sqlite3.Error as e:
-        print(f"Erro ao criar a tabela: {e}")  # Imprime erros no console
+        print(f"Erro ao criar a tabela: {e}")
     finally:
-        conn.close()  # Fecha a conexão com o banco de dados
+        conn.close()
 
-# Inicializa o banco de dados quando o aplicativo é iniciado
 init_db()
-
-# --- Rotas do Flask ---
 
 @app.route('/')
 def index():
-    """
-    Rota para a página inicial, que renderiza o template 'index.html'.
-    """
     return render_template('index.html')
 
 @app.route('/diarias', methods=['GET', 'POST'])
 def diarias():
-    """
-    Rota para lidar com a criação e recuperação de dados de diárias.
-
-    - POST: Recebe os dados do formulário, calcula ganhos, despesas e lucro,
-            e salva os dados no banco de dados. Retorna os dados salvos em JSON.
-    - GET: Recupera todos os dados de diárias do banco de dados e retorna em JSON.
-    """
-    conn = get_db_connection()  # Obtém uma conexão com o banco de dados
-    cursor = conn.cursor()  # Cria um cursor para executar comandos SQL
+    conn = get_db_connection()
+    cursor = conn.cursor()
 
     if request.method == 'POST':
         try:
-            # Obter dados do formulário
             dia = request.form['dia']
             km_rodados = float(request.form['km_rodados'])
             horas_trabalhadas = float(request.form['horas_trabalhadas'])
@@ -81,16 +58,16 @@ def diarias():
             financ = float(request.form['financ'])
             pro_labore = float(request.form['pro_labore'])
 
-            # Calcular ganhos
-            ganhos = (horas_trabalhadas == 0) ? 0 : km_rodados * 1.89 / horas_trabalhadas
+            # Calcular ganhos (corrigido)
+            if horas_trabalhadas == 0:
+                ganhos = 0
+            else:
+                ganhos = km_rodados * 1.89 / horas_trabalhadas
 
-            # Calcular despesas totais
             despesas_totais = combustivel + almoco + manutencao + seguro + financ + pro_labore
 
-            # Calcular lucro
             lucro = ganhos - despesas_totais
 
-            # Inserir dados no banco de dados
             cursor.execute('''
                 INSERT INTO diarias (
                     dia, km_rodados, horas_trabalhadas, ganhos, combustivel, almoco,
@@ -99,37 +76,34 @@ def diarias():
             ''', (dia, km_rodados, horas_trabalhadas, ganhos, combustivel, almoco,
                   manutencao, seguro, financ, pro_labore, despesas_totais, lucro))
 
-            conn.commit()  # Salva as alterações no banco de dados
+            conn.commit()
 
-            # Recuperar os dados inseridos para retornar como JSON
             cursor.execute("SELECT * FROM diarias WHERE id = last_insert_rowid()")
-            data = dict(cursor.fetchone())  # Obtenha os dados como um dicionário
+            data = dict(cursor.fetchone())
 
-            return jsonify(data), 201  # Retorna os dados inseridos com código 201 (Created)
+            return jsonify(data), 201
 
         except Exception as e:
-            conn.rollback()  # Em caso de erro, desfaz as alterações
-            return jsonify({"error": str(e)}), 400  # Retorna mensagem de erro com código 400 (Bad Request)
+            conn.rollback()
+            return jsonify({"error": str(e)}), 400
 
         finally:
-            conn.close()  # Fecha a conexão com o banco de dados
+            conn.close()
 
     elif request.method == 'GET':
         try:
-            # Recuperar todos os dados do banco de dados
             cursor.execute("SELECT * FROM diarias")
-            rows = cursor.fetchall()  # Obtenha todos os dados
+            rows = cursor.fetchall()
 
-            # Converter as linhas em uma lista de dicionários
             diarias = [dict(row) for row in rows]
 
-            return jsonify(diarias), 200  # Retorna os dados com código 200 (OK)
+            return jsonify(diarias), 200
 
         except Exception as e:
-            return jsonify({"error": str(e)}), 500  # Retorna mensagem de erro com código 500 (Internal Server Error)
+            return jsonify({"error": str(e)}), 500
 
         finally:
-            conn.close()  # Fecha a conexão com o banco de dados
+            conn.close()
 
 if __name__ == '__main__':
     app.run(debug=True)

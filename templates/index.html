@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber Controle</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Uber Controle</h1>
+
+        <h2>Inserir Dados Diários</h2>
+        <form id="formulario-dados">
+            <div class="form-group">
+                <label for="dia">Dia:</label>
+                <input type="date" id="dia" name="dia" required>
+            </div>
+
+            <div class="form-group">
+                <label for="km_rodados">Km Rodados:</label>
+                <input type="number" id="km_rodados" name="km_rodados" step="0.01" required>
+            </div>
+
+            <div class="form-group">
+                <label for="horas_trabalhadas">Horas Trabalhadas:</label>
+                <input type="number" id="horas_trabalhadas" name="horas_trabalhadas" step="0.01" required>
+            </div>
+
+            <button type="button" id="btn-cadastrar">Cadastrar</button>
+        </form>
+
+        <h2>Dados Diários</h2>
+        <div id="resultados">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dia</th>
+                        <th>Km Rodados</th>
+                        <th>Horas Trab.</th>
+                        <th>Ganhos</th>
+                        <th>Combustível</th>
+                        <th>Almoço</th>
+                        <th>Manutenção</th>
+                        <th>Seguro</th>
+                        <th>Financ.</th>
+                        <th>Pro-labore</th>
+                        <th>Despesas Totais</th>
+                        <th>Lucro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="static/js/script.js"></script>
+</body>
+
+</html>
